@@ -2,9 +2,9 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <httplib.h>
 
 void ping_tracker(const std::string& tracker_url) {
+    std::this_thread::sleep_for(std::chrono::seconds(5)); // đợi server start
     httplib::Client cli(tracker_url.c_str());
     while (true) {
         auto res = cli.Get("/ping");
@@ -22,11 +22,10 @@ int main() {
         std::cout << "[Waker] Tracker pinged me!" << std::endl;
     });
 
-    std::thread ping_thread(ping_tracker, "dockertesting-for-tracker.onrender.com"); // URL tracker
+    std::thread ping_thread(ping_tracker, "http://dockertesting-for-tracker.onrender.com"); // URL tracker
 
     std::cout << "[Waker] HTTP waker listening on port 80" << std::endl;
     svr.listen("0.0.0.0", 80);
 
     ping_thread.join();
 }
-
